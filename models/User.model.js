@@ -9,9 +9,30 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        require: true
+    },
+    age: {
+        type: String,
+        require: true
+    },
+    Mobile: {
+        type: String,
+        require: true
+    },
     voterId: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        enum: ['voter','admin'],
+        default: 'voter'
+    },
+    isVoted: {
+        type: Boolean,
+        default: false
     }
 });
 

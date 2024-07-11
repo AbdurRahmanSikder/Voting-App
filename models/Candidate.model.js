@@ -9,10 +9,27 @@ const candidateSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    voterId: {
-        type: String,
+    age: {
+        type: Number,
         required: true
     },
+    party: {
+        type: String,
+        require: true
+    },
+    vote: [
+        {
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                require: true
+            },
+            votedAt: {
+                type: Date,
+                default: Date.now()
+            },
+
+        }
+    ],
     voteCount: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
@@ -20,34 +37,33 @@ const candidateSchema = mongoose.Schema({
 
 });
 
-candidateSchema.pre("save",async function(next){
+candidateSchema.pre("save", async function (next) {
     const person = this;
-    if(!person.isModified('password'))
+    if (!person.isModified('password'))
         next();
-    try{
+    try {
         const salt = await bcrypt.genSalt(10);
-        const hashedpassword = await bcrypt.hash(salt,this.password);
+        const hashedpassword = await bcrypt.hash(salt, this.password);
         this.password = hashedpassword;
         next();
     }
-    catch(err)
-    {
-        console.log("Candidate model",err);
+    catch (err) {
+        console.log("Candidate model", err);
         next(err);
     }
 })
 
-candidateSchema.methods.comparePassword(async function(candidatePassword){
-   try{
-    const isMatch = await bcrypt.compare(candidatePassword,this.password);
-    return isMatch;
-   }
-   catch(err){
-     console.log("Candidate model",err);
-   }
+candidateSchema.methods.comparePassword(async function (candidatePassword) {
+    try {
+        const isMatch = await bcrypt.compare(candidatePassword, this.password);
+        return isMatch;
+    }
+    catch (err) {
+        console.log("Candidate model", err);
+    }
 
 })
 
-const Candidate = mongoose.model("Candidate",candidateSchema);
+const Candidate = mongoose.model("Candidate", candidateSchema);
 
 module.exports = Candidate;
