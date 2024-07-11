@@ -43,7 +43,7 @@ candidateSchema.pre("save", async function (next) {
         next();
     try {
         const salt = await bcrypt.genSalt(10);
-        const hashedpassword = await bcrypt.hash(salt, this.password);
+        const hashedpassword = await bcrypt.hash( person.password,salt);
         this.password = hashedpassword;
         next();
     }
@@ -53,7 +53,7 @@ candidateSchema.pre("save", async function (next) {
     }
 })
 
-candidateSchema.methods.comparePassword(async function (candidatePassword) {
+candidateSchema.methods.comparePassword = async function (candidatePassword) {
     try {
         const isMatch = await bcrypt.compare(candidatePassword, this.password);
         return isMatch;
@@ -62,7 +62,7 @@ candidateSchema.methods.comparePassword(async function (candidatePassword) {
         console.log("Candidate model", err);
     }
 
-})
+}
 
 const Candidate = mongoose.model("Candidate", candidateSchema);
 

@@ -27,7 +27,7 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['voter','admin'],
+        enum: ['voter', 'admin'],
         default: 'voter'
     },
     isVoted: {
@@ -43,28 +43,28 @@ userSchema.pre("save", async function (next) {
 
     try {
         const salt = await bcrypt.genSalt(10);
-        const hashedpassword = await bcrypt.hash(salt, person.password);
+        const hashedpassword = await bcrypt.hash(person.password,salt);
         person.password = hashedpassword;
         next();
 
     }
     catch (err) {
-        console.log("Candidate model",err);
+        console.log("Candidate model", err);
         next(err);
     }
 })
 
 
-userSchema.methods.comparePassword(async function (candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
     try {
         const isMatch = bcrypt.compare(candidatePassword, this.password);
         return isMatch;
     }
-    catch(err){
-        console.log("User model",err);
+    catch (err) {
+        console.log("User model", err);
         console.log(err);
     }
-})
+}
 
 const user = mongoose.model("User", userSchema);
 module.exports = user;
