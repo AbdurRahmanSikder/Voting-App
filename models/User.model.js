@@ -62,7 +62,6 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
     }
     catch (err) {
         console.log("User model", err);
-        console.log(err);
     }
 }
 

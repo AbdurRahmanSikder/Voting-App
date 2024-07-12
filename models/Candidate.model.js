@@ -17,10 +17,11 @@ const candidateSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    vote: [
+    votes: [
         {
             user: {
                 type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
                 require: true
             },
             votedAt: {
@@ -31,8 +32,8 @@ const candidateSchema = mongoose.Schema({
         }
     ],
     voteCount: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        type: Number,
+        default: 0
     }
 
 });
@@ -43,7 +44,7 @@ candidateSchema.pre("save", async function (next) {
         next();
     try {
         const salt = await bcrypt.genSalt(10);
-        const hashedpassword = await bcrypt.hash( person.password,salt);
+        const hashedpassword = await bcrypt.hash(person.password, salt);
         this.password = hashedpassword;
         next();
     }
@@ -54,6 +55,7 @@ candidateSchema.pre("save", async function (next) {
 })
 
 candidateSchema.methods.comparePassword = async function (candidatePassword) {
+
     try {
         const isMatch = await bcrypt.compare(candidatePassword, this.password);
         return isMatch;
